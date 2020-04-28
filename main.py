@@ -4,16 +4,30 @@ import threading
 from serialData import portScales
 
 
-nameReadWeight = 'readWeight'
+def listTkUpdate(pScale, listTk):
+    update = [False, False]
+    while True:
+        if pScale.readContin:
+            update[0] = pScale.readUpdate
+            if update[0] != update[1]:
+                listTk.insert(tk.END, pScale.accumulatedMass)
+                update[1] = update[0]
+        else:
+            break
 
 
 def stopRead(pScale):
     pScale.stopRead()
 
 
-def startReadWeight(fan, fan_args, pScale):
+def startReadWeight(fan, fan_args, pScale, listTk):
     pScale.startRead()
-    read = threading.Thread(target=fan, args=fan_args, name=nameReadWeight)
+    read = threading.Thread(target=fan, args=fan_args)
+    readUbdate = threading.Thread(
+        target=listTkUpdate,
+        args=(pScale, listTk)
+    )
+    readUbdate.start()
     read.start()
 
 
@@ -27,8 +41,6 @@ def main():
             message='беда беда завите киповца, не найден COM-port'
         )
     activPort = tk.IntVar()
-    newString = tk.StringVar()
-    newString.set(pScale.accumulatedMass)
     portSelection = [
         tk.Radiobutton(
             text=f'для получения данных от весов использовать {x}',
@@ -38,7 +50,7 @@ def main():
     for x in portSelection:
         x.pack()
 
-    listTk = tk.Listbox(root, width=150)
+    listTk = tk.Listbox(root, width=150, height=20)
     listTk.pack(side=tk.RIGHT)
     frame = tk.Frame(root)
     frame.pack(side=tk.LEFT)
@@ -47,7 +59,8 @@ def main():
         command=lambda: startReadWeight(
             pScale.readData,
             (pScale.portsNames[activPort.get()],),
-            pScale
+            pScale,
+            listTk
         )
     )
     buttonStop = tk.Button(

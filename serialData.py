@@ -6,6 +6,7 @@ class portScales:
     accumulatedMass = 0
     portsNames = None
     readContin = False
+    readUpdate = False
 
     def __init__(self):
         self.portsNames = self.portDiscovery()
@@ -38,6 +39,7 @@ class portScales:
                     s = port.readline()
                     if bool(s):
                         self.accumulatedMass += 1
+                        self.readUpdate = not self.readUpdate
                         print(f'{s} ::: {self.accumulatedMass}')
                     else:
                         continue
