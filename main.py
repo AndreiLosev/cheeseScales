@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import threading
 from serialData import portScales
+from time import strftime, localtime
 
 
 def listTkUpdate(pScale, listTk):
@@ -11,7 +12,9 @@ def listTkUpdate(pScale, listTk):
         if pScale.readContin:
             update[0] = pScale.readUpdate
             if update[0] != update[1]:
-                listTk.insert(row, pScale.accumulatedMass)
+                timeNow = strftime('%H:%M:%S', localtime())
+                newRow = f'{timeNow} --- {pScale.accumulatedMass}'
+                listTk.insert(row, newRow)
                 listTk.itemconfig(row, background='#abcdef')
                 if row != 0:
                     listTk.itemconfig(row - 1, background='#ffffff')

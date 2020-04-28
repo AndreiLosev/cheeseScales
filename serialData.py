@@ -41,7 +41,6 @@ class portScales:
                 if self.readContin:
                     s = port.readline()
                     if bool(s):
-                        self.accumulatedMass += 1
                         self.readUpdate = not self.readUpdate
                         print(s)
                         self.accumulatedMass += self.summ(s)
