@@ -5,12 +5,20 @@ from serialData import portScales
 
 
 def listTkUpdate(pScale, listTk):
+    row = 0
     update = [False, False]
     while True:
         if pScale.readContin:
             update[0] = pScale.readUpdate
             if update[0] != update[1]:
-                listTk.insert(tk.END, pScale.accumulatedMass)
+                listTk.insert(row, pScale.accumulatedMass)
+                listTk.itemconfig(row, background='#abcdef')
+                if row != 0:
+                    listTk.itemconfig(row - 1, background='#ffffff')
+                else:
+                    listTk.itemconfig(tk.END, background='#ffffff')
+                listTk.delete(row + 1)
+                row = (row + 1) % 20
                 update[1] = update[0]
         else:
             break
@@ -52,6 +60,8 @@ def main():
 
     listTk = tk.Listbox(root, width=150, height=20)
     listTk.pack(side=tk.RIGHT)
+    for i in range(0, 20):
+        listTk.insert(i, '')
     frame = tk.Frame(root)
     frame.pack(side=tk.LEFT)
     buttonStart = tk.Button(

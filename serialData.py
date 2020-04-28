@@ -17,6 +17,9 @@ class portScales:
     def startRead(self):
         self.readContin = True
 
+    def summ(self, newWeight):
+        return float(newWeight.decode('ascii'))
+
     def portDiscovery(self):
         ports = serialPorts.comports()
         portsName = []
@@ -40,7 +43,9 @@ class portScales:
                     if bool(s):
                         self.accumulatedMass += 1
                         self.readUpdate = not self.readUpdate
-                        print(f'{s} ::: {self.accumulatedMass}')
+                        print(s)
+                        self.accumulatedMass += self.summ(s)
+                        self.accumulatedMass = round(self.accumulatedMass, 2)
                     else:
                         continue
                 else:
