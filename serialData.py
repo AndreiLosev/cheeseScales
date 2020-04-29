@@ -23,7 +23,7 @@ class portScales:
         self.readContin = True
 
     def summ(self, newWeight):
-        pattern = re.compile('\d{2}.\d{2}')
+        pattern = re.compile(r'\d{2}.\d{2}')
         result = re.search(pattern, newWeight.decode('ascii'))
         return float(result.group(0))
 

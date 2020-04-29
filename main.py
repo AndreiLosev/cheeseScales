@@ -40,6 +40,7 @@ def listTkUpdate(pScale, listTk):
                 update[1] = update[0]
             elif pScale.zeroing:
                 pScale.accumulatedMass = 0
+                pScale.number = 0
                 content2listboxTK()
                 pScale.zeroing = False
         else:
