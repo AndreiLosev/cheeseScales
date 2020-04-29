@@ -51,6 +51,11 @@ def startReadWeight(fan, fan_args, pScale, listTk, buttonStart):
         buttonStart.config(relief=tk.SUNKEN)
 
 
+def closeApp(root, pScale, buttonStart):
+    stopRead(pScale, buttonStart)
+    root.destroy()
+
+
 def main():
     root = tk.Tk()
 
@@ -94,6 +99,10 @@ def main():
     buttonStart.pack()
     buttonStop.pack()
     buttonZeroing.pack()
+    root.protocol(
+        "WM_DELETE_WINDOW",
+        lambda: closeApp(root, pScale, buttonStart)
+    )
     root.mainloop()
 
 
