@@ -4,6 +4,7 @@ import serial.tools.list_ports as serialPorts
 
 class portScales:
     accumulatedMass = 0
+    lastMass = 0
     portsNames = None
     readContin = False
     readUpdate = False
@@ -43,6 +44,7 @@ class portScales:
                     if bool(s):
                         self.readUpdate = not self.readUpdate
                         print(s)
+                        self.lastMass = self.summ(s)
                         self.accumulatedMass += self.summ(s)
                         self.accumulatedMass = round(self.accumulatedMass, 2)
                     else:

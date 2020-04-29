@@ -12,8 +12,12 @@ def listTkUpdate(pScale, listTk):
         if pScale.readContin:
             update[0] = pScale.readUpdate
             if update[0] != update[1]:
-                timeNow = strftime('%H:%M:%S', localtime())
-                newRow = f'{timeNow} --- {pScale.accumulatedMass}'
+                x1 = strftime('%H:%M:%S', localtime())
+                x2 = pScale.lastMass
+                x3 = pScale.accumulatedMass
+                t1 = 'последнее взвешивание'
+                t2 = 'накопленная масса'
+                newRow = f'{x1} | {t1}: {x2} кг | {t2} {x3} кг'
                 listTk.insert(row, newRow)
                 listTk.itemconfig(row, background='#abcdef')
                 if row != 0:
@@ -27,19 +31,24 @@ def listTkUpdate(pScale, listTk):
             break
 
 
-def stopRead(pScale):
+def stopRead(pScale, buttonStart):
     pScale.stopRead()
+    buttonStart.config(relief=tk.RAISED)
 
 
-def startReadWeight(fan, fan_args, pScale, listTk):
-    pScale.startRead()
-    read = threading.Thread(target=fan, args=fan_args)
-    readUbdate = threading.Thread(
-        target=listTkUpdate,
-        args=(pScale, listTk)
-    )
-    readUbdate.start()
-    read.start()
+def startReadWeight(fan, fan_args, pScale, listTk, buttonStart):
+    if pScale.readContin:
+        return
+    else:
+        pScale.startRead()
+        read = threading.Thread(target=fan, args=fan_args)
+        readUbdate = threading.Thread(
+            target=listTkUpdate,
+            args=(pScale, listTk)
+        )
+        readUbdate.start()
+        read.start()
+        buttonStart.config(relief=tk.SUNKEN)
 
 
 def main():
@@ -73,12 +82,13 @@ def main():
             pScale.readData,
             (pScale.portsNames[activPort.get()],),
             pScale,
-            listTk
+            listTk,
+            buttonStart
         )
     )
     buttonStop = tk.Button(
         frame, text='Стоп',
-        command=lambda: stopRead(pScale)
+        command=lambda: stopRead(pScale, buttonStart)
     )
     buttonZeroing = tk.Button(frame, text='Обнулить')
     buttonStart.pack()
