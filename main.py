@@ -5,28 +5,43 @@ from serialData import portScales
 from time import strftime, localtime
 
 
+def zeroing(pScale):
+    pScale.zeroing = True
+
+
 def listTkUpdate(pScale, listTk):
     row = 0
     update = [False, False]
+
+    def content2listboxTK():
+        nonlocal row
+        x1 = strftime('%H:%M:%S', localtime())
+        x2 = pScale.lastMass
+        x3 = pScale.accumulatedMass
+        x4 = pScale.number
+        t1 = 'последнее взвешивание'
+        t2 = 'накопленная масса'
+        t3 = 'количесвто голов'
+        newRow = f'{x1} | {t1}: {x2} кг | {t2} {x3} кг | {t3} {x4} шт'
+        listTk.insert(row, newRow)
+        listTk.itemconfig(row, background='#abcdef')
+        if row != 0:
+            listTk.itemconfig(row - 1, background='#ffffff')
+        else:
+            listTk.itemconfig(tk.END, background='#ffffff')
+            listTk.delete(row + 1)
+        row = (row + 1) % 20
+
     while True:
         if pScale.readContin:
             update[0] = pScale.readUpdate
             if update[0] != update[1]:
-                x1 = strftime('%H:%M:%S', localtime())
-                x2 = pScale.lastMass
-                x3 = pScale.accumulatedMass
-                t1 = 'последнее взвешивание'
-                t2 = 'накопленная масса'
-                newRow = f'{x1} | {t1}: {x2} кг | {t2} {x3} кг'
-                listTk.insert(row, newRow)
-                listTk.itemconfig(row, background='#abcdef')
-                if row != 0:
-                    listTk.itemconfig(row - 1, background='#ffffff')
-                else:
-                    listTk.itemconfig(tk.END, background='#ffffff')
-                listTk.delete(row + 1)
-                row = (row + 1) % 20
+                content2listboxTK()
                 update[1] = update[0]
+            elif pScale.zeroing:
+                pScale.accumulatedMass = 0
+                content2listboxTK()
+                pScale.zeroing = False
         else:
             break
 
@@ -95,7 +110,10 @@ def main():
         frame, text='Стоп',
         command=lambda: stopRead(pScale, buttonStart)
     )
-    buttonZeroing = tk.Button(frame, text='Обнулить')
+    buttonZeroing = tk.Button(
+        frame, text='Обнулить',
+        command=lambda: zeroing(pScale)
+    )
     buttonStart.pack()
     buttonStop.pack()
     buttonZeroing.pack()

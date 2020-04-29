@@ -1,13 +1,16 @@
 import serial
 import serial.tools.list_ports as serialPorts
+from time import sleep
 
 
 class portScales:
     accumulatedMass = 0
     lastMass = 0
+    number = 0
     portsNames = None
     readContin = False
     readUpdate = False
+    zeroing = False
 
     def __init__(self):
         self.portsNames = self.portDiscovery()
@@ -42,11 +45,13 @@ class portScales:
                 if self.readContin:
                     s = port.readline()
                     if bool(s):
-                        self.readUpdate = not self.readUpdate
                         print(s)
                         self.lastMass = self.summ(s)
-                        self.accumulatedMass += self.summ(s)
+                        self.accumulatedMass += self.lastMass
+                        self.number += 4
                         self.accumulatedMass = round(self.accumulatedMass, 2)
+                        sleep(0.1)
+                        self.readUpdate = not self.readUpdate
                     else:
                         continue
                 else:
