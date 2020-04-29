@@ -1,6 +1,7 @@
 import serial
 import serial.tools.list_ports as serialPorts
 from time import sleep
+import re
 
 
 class portScales:
@@ -22,7 +23,9 @@ class portScales:
         self.readContin = True
 
     def summ(self, newWeight):
-        return float(newWeight.decode('ascii'))
+        pattern = re.compile('\d{2}.\d{2}')
+        result = re.search(pattern, newWeight.decode('ascii'))
+        return float(result.group(0))
 
     def portDiscovery(self):
         ports = serialPorts.comports()
