@@ -22,10 +22,20 @@ class portScales:
     def startRead(self):
         self.readContin = True
 
+    def validMassa(self, arrayInt):
+        if int(arrayInt[0]) >= 2:
+            arrayInt.pop(0)
+            return self.validMassa(arrayInt)
+        else:
+            return arrayInt
+
     def summ(self, newWeight):
-        pattern = re.compile(r'\d{2}.\d{2}')
-        result = re.search(pattern, newWeight.decode('ascii'))
-        return float(result.group(0))
+        pattern = re.compile(r'\d{2}\W\d{2}')
+        result = re.findall(pattern, newWeight.decode('ascii'))
+        if not bool(len(result)):
+            pattern = re.compile(r'\d{2}\W\d')
+            result = re.findall(pattern, newWeight.decode('ascii'))
+        return float(result[0])
 
     def portDiscovery(self):
         ports = serialPorts.comports()
